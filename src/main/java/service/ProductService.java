@@ -114,24 +114,24 @@ public class ProductService {
         int productType = chooseProductType();
         if (productType == Constant.GO_BACK) return null;
         String productCode = getInputProductCode();
-        String name = getInputString("Product name");
-        String brand = getInputString("Brand");
-        String model = getInputString("Model");
-        double salePrice = getInputDouble("Sale price");
-        double importPrice = getInputDouble("Import price");
-        int quantity = getInputInteger("Quantity");
+        String name = ProjectUtils.getInputString("Product name",8,20);
+        String brand = ProjectUtils.getInputString("Brand",4,20);
+        String model = ProjectUtils.getInputString("Model",4,20);
+        double salePrice = ProjectUtils.getInputDouble("Sale price");
+        double importPrice = ProjectUtils.getInputDouble("Import price");
+        int quantity = ProjectUtils.getInputInteger("Quantity");
         switch (productType) {
             case Constant.SMARTPHONE:
-                double width = getInputDouble("Width");
-                double height = getInputDouble("Height");
-                int batteryLife = getInputInteger("Battery life");
-                double resolution = getInputInteger("Resolution");
+                double width = ProjectUtils.getInputDouble("Width");
+                double height = ProjectUtils.getInputDouble("Height");
+                int batteryLife = ProjectUtils.getInputInteger("Battery life");
+                double resolution = ProjectUtils.getInputInteger("Resolution");
                 System.out.println("Create new product success!!!");
                 return new SmartPhone(productCode, name, brand, model, salePrice, importPrice, quantity, productType, width, height, batteryLife, resolution);
             case Constant.LAPTOP:
-                String cpu = getInputString("Cpu info");
-                int ram = getInputInteger("RAM info");
-                int hardDiskCapacity = getInputInteger("hard disk capacity");
+                String cpu = ProjectUtils.getInputString("Cpu info",8,20);
+                int ram = ProjectUtils.getInputInteger("RAM info");
+                int hardDiskCapacity = ProjectUtils.getInputInteger("hard disk capacity");
                 System.out.println("Create new product success!!!");
                 return new Laptop(productCode, name, brand, model, salePrice, importPrice, quantity, productType, cpu, ram, hardDiskCapacity);
         }
@@ -193,55 +193,4 @@ public class ProductService {
             }
         }
     }
-
-    public double getInputDouble(String property) {
-        while (true) {
-            System.out.println("Enter " + property + ":");
-            try {
-                double value = Double.parseDouble(scanner.nextLine());
-                if (value < 0)
-                    throw new RuntimeException();
-                return value;
-            } catch (Exception e) {
-                System.out.println("Invalid " + property);
-            }
-
-        }
-    }
-
-    public Integer getInputInteger(String property) {
-        while (true) {
-            System.out.println("Enter " + property + ":");
-            try {
-                int value = Integer.parseInt(scanner.nextLine());
-                if (value < 0)
-                    throw new RuntimeException();
-                return value;
-            } catch (Exception e) {
-                System.out.println("Invalid " + property);
-            }
-
-        }
-    }
-
-    public String getInputString(String property) {
-        while (true) {
-            System.out.println("Enter " + property + " (8-20 characters):");
-            String value = scanner.nextLine();
-            if (ProjectUtils.validate(Constant.STRING_PROPERTY_REGEX, value, 4, 20)) {
-                return value;
-            } else {
-                System.out.println("Invalid " + property);
-            }
-        }
-    }
-
-//    public static void main(String[] args) {
-//        ProductService productService = new ProductService();
-//        int productType = Constant.ALL;
-//        while (true) {
-//            productType = productService.productMenu(productType);
-//        }
-//
-//    }
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO implements IDAO<ElectricDevice> {
-
+    private static  String findByProductCode = "select * from product where productCode=?;";
     private String saveSQL = "insert into product" +
             "(productCode,name,brand,model,salePrice,importPrice,quantity,productType,width,height,batteryLife,resolution,cpu,ram,hardDiskCapacity)" +
             " value (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
@@ -20,6 +20,28 @@ public class ProductDAO implements IDAO<ElectricDevice> {
             "name= ? ,brand= ?,model= ?,salePrice= ?,importPrice= ?,quantity= ?,productType= ?," +
             "width= ?,height= ?,batteryLife= ?,resolution= ?," +
             "cpu= ?,ram= ?,hardDiskCapacity= ? where productCode= ?" ;
+
+    public static ElectricDevice findByProductCode(String productCode){
+        try (Connection connection = DatabaseConnection.getConnect()) {
+            PreparedStatement preparedStatement=connection.prepareStatement(findByProductCode);
+            preparedStatement.setString(1,productCode);
+            ResultSet rs=preparedStatement.executeQuery();
+            while (rs.next()) {
+                double salePrice= rs.getDouble("salePrice");
+                double importPrice= rs.getDouble("importPrice");
+                int quantity= rs.getInt("quantity");
+                ElectricDevice electricDevice=new ElectricDevice();
+                electricDevice.setProductCode(productCode);
+                electricDevice.setQuantity(quantity);
+                electricDevice.setSalePrice(salePrice);
+                electricDevice.setImportPrice(importPrice);
+                return electricDevice;
+            }
+        } catch (SQLException e) {
+            return null;
+        }
+        return null;
+    }
 
     public static List<String> getAllProductCode(){
         String findAllSQL = "select * from product  ";

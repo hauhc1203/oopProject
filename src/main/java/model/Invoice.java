@@ -1,6 +1,6 @@
 package model;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.Map;
 
 public class Invoice {
@@ -9,6 +9,13 @@ public class Invoice {
     private Map<ElectricDevice,Integer> items;
     private double total;
     private int type;
+
+    public Invoice(String invoiceCode, Map<ElectricDevice, Integer> items, double total, int type) {
+        this.invoiceCode = invoiceCode;
+        this.items = items;
+        this.total = total;
+        this.type = type;
+    }
 
     public Invoice(String invoiceCode, Date date, Map<ElectricDevice, Integer> items, double total, int type) {
         this.invoiceCode = invoiceCode;
