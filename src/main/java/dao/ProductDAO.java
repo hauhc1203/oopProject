@@ -141,7 +141,7 @@ public class ProductDAO implements IDAO<ElectricDevice> {
 
     @Override
     public List<ElectricDevice> findAll(int productType) {
-        String findAllSQL = "select * from product  ";
+        String findAllSQL = "select * from product order by quantity";
         String where = "where productType=" + productType;
         if (productType == Constant.ALL)
             where = "";

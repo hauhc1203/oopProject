@@ -210,8 +210,11 @@ public class ProductService {
         switch (choice) {
             case 1:
                 ElectricDevice electricDevice = createProduct();
-                if (electricDevice == null)
+                if (electricDevice == null){
+                    System.out.println("Create new product failed!!!");
                     break;
+                }
+
                 productDAO.save(electricDevice);
                 System.out.println("Create new product success!!!");
                 break;

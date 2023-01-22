@@ -5,7 +5,7 @@ public class Constant {
     public static final int SMARTPHONE=1;
     public static final int LAPTOP=2;
 
-    public static final int ERROR_3_TIMES=100;
+    public static final int ERROR_3_TIMES=123123123;
     public static final int IMPORT_INVOICE=1;
     public static final int EXPORT_INVOICE=2;
 
