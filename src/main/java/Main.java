@@ -1,4 +1,6 @@
 import config.Constant;
+import model.Invoice;
+import service.InvoiceService;
 import service.ProductService;
 
 import java.util.Scanner;
@@ -8,6 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         ProductService productService = new ProductService();
+        InvoiceService invoiceService =new InvoiceService();
         Scanner scanner = new Scanner(System.in);
         int productType = Constant.ALL;
         while (true) {
@@ -29,6 +32,7 @@ public class Main {
             }
             switch (choice) {
                 case 1:
+                    invoiceService.menuInvoice();
                     break;
                 case 2:
                     while (true) {

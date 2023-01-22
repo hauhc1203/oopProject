@@ -7,30 +7,52 @@ public class Invoice {
     private String invoiceCode;
     private Date date;
     private Map<ElectricDevice,Integer> items;
-    private double total;
-    private int type;
+    private double totalSalePrice;
+    private double totalImportPrice;
+    private double totalProfit;
+    private int invoiceType;
 
-    public Invoice(String invoiceCode, Map<ElectricDevice, Integer> items, double total, int type) {
+    public Invoice(String invoiceCode, Map<ElectricDevice, Integer> items, double totalSalePrice, double totalImportPrice, double totalProfit, int type) {
         this.invoiceCode = invoiceCode;
         this.items = items;
-        this.total = total;
-        this.type = type;
+        this.totalSalePrice = totalSalePrice;
+        this.totalImportPrice = totalImportPrice;
+        this.totalProfit = totalProfit;
+        this.invoiceType = type;
     }
 
-    public Invoice(String invoiceCode, Date date, Map<ElectricDevice, Integer> items, double total, int type) {
-        this.invoiceCode = invoiceCode;
-        this.date = date;
-        this.items = items;
-        this.total = total;
-        this.type = type;
+    public double getTotalProfit() {
+        return totalProfit;
     }
 
-    public Invoice() {
+    public void setTotalProfit(double totalProfit) {
+        this.totalProfit = totalProfit;
     }
 
     public String getInvoiceCode() {
         return invoiceCode;
     }
+
+    public double getTotalSalePrice() {
+        return totalSalePrice;
+    }
+
+    public void setTotalSalePrice(double totalSalePrice) {
+        this.totalSalePrice = totalSalePrice;
+    }
+
+    public double getTotalImportPrice() {
+        return totalImportPrice;
+    }
+
+    public void setTotalImportPrice(double totalImportPrice) {
+        this.totalImportPrice = totalImportPrice;
+    }
+
+    public Invoice() {
+    }
+
+
 
     public void setInvoiceCode(String invoiceCode) {
         this.invoiceCode = invoiceCode;
@@ -52,19 +74,12 @@ public class Invoice {
         this.items = items;
     }
 
-    public double getTotal() {
-        return total;
+
+    public int getInvoiceType() {
+        return invoiceType;
     }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
+    public void setInvoiceType(int invoiceType) {
+        this.invoiceType = invoiceType;
     }
 }

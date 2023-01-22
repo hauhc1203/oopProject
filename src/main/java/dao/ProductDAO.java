@@ -1,5 +1,12 @@
 package dao;
 
+import com.mysql.cj.CancelQueryTask;
+import com.mysql.cj.Query;
+import com.mysql.cj.QueryAttributesBindings;
+import com.mysql.cj.Session;
+import com.mysql.cj.protocol.Message;
+import com.mysql.cj.protocol.ProtocolEntityFactory;
+import com.mysql.cj.protocol.Resultset;
 import config.Constant;
 import config.DatabaseConnection;
 import model.ElectricDevice;
@@ -9,9 +16,14 @@ import model.SmartPhone;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ProductDAO implements IDAO<ElectricDevice> {
     private static  String findByProductCode = "select * from product where productCode=?;";
+    private static  String findByName= "select * from product where name like ?;";
+    private static  String findByBrand= "select * from product where brand = ?;";
+
+    private static  String updateQuantity = "update product set quantity=? where productCode=?;";
     private String saveSQL = "insert into product" +
             "(productCode,name,brand,model,salePrice,importPrice,quantity,productType,width,height,batteryLife,resolution,cpu,ram,hardDiskCapacity)" +
             " value (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
@@ -21,6 +33,68 @@ public class ProductDAO implements IDAO<ElectricDevice> {
             "width= ?,height= ?,batteryLife= ?,resolution= ?," +
             "cpu= ?,ram= ?,hardDiskCapacity= ? where productCode= ?" ;
 
+    public List<ElectricDevice> findByNameOrBrand(String pname,String pbrand) {
+        String query;
+
+        if (pbrand!=null){
+            query=findByBrand;
+        }else {
+            pname="%"+pname+"%";
+            query=findByName;
+        }
+        List<ElectricDevice> electricDevices = new ArrayList<>();
+        try (Connection connection = DatabaseConnection.getConnect()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            if (pbrand!=null){
+                preparedStatement.setString(1,pbrand);
+            }else {
+                preparedStatement.setString(1,pname);
+            }
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                String productCode = rs.getString("productCode");
+                String name = rs.getString("name");
+                String brand = rs.getString("brand");
+                String model = rs.getString("model");
+                double salePrice =rs.getDouble("salePrice");
+                double importPrice =rs.getDouble("importPrice");
+                int quantity = rs.getInt("quantity");
+                int productType1=Integer.parseInt(rs.getString("productType"));
+                if (productType1 == Constant.SMARTPHONE) {
+                    float width = rs.getFloat("width");
+                    float height = rs.getFloat("height");
+                    int batteryLife = rs.getInt("batteryLife");
+                    int resolution = rs.getInt("resolution");
+                    electricDevices.add(
+                            new SmartPhone(productCode, name, brand, model, salePrice, importPrice, quantity,productType1, width, height, batteryLife, resolution));
+                } else if (productType1==Constant.LAPTOP){
+                    String cpu = rs.getString("cpu");
+                    int ram = rs.getInt("ram");
+                    int hardDiskCapacity = rs.getInt("hardDiskCapacity");
+                    electricDevices.add(new Laptop(productCode, name, brand, model, salePrice, importPrice, quantity, productType1,cpu,ram,hardDiskCapacity));
+                }
+
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return electricDevices;
+    }
+
+
+
+    public static void  updateQuantityByProductCode(String productCode,int quantity){
+        try (Connection connection = DatabaseConnection.getConnect()) {
+            PreparedStatement preparedStatement=connection.prepareStatement(updateQuantity);
+            preparedStatement.setString(2,productCode);
+            preparedStatement.setInt(1,quantity);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static ElectricDevice findByProductCode(String productCode){
         try (Connection connection = DatabaseConnection.getConnect()) {
             PreparedStatement preparedStatement=connection.prepareStatement(findByProductCode);

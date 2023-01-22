@@ -14,10 +14,35 @@ import java.util.List;
 
 public class InvoiceDAO implements IDAO<Invoice> {
     private static final String INSERT_SQL = "INSERT INTO invoice " +
-            "( invoiceCode  ,total, type ) VALUES (?,?,?);";
-    private static final String FIND_ALL_BY_DATE = "S INTO invoice " +
-            "( invoiceCode ,date ,total, type ) VALUES (?,?,?,?);";
+            "( invoiceCode  ,totalSalePrice,totalImportPrice,totalProfit, invoiceType ) VALUES (?,?,?,?,?);";
+    private static final String FIND_ALL_BY_DATE = "select * from invoice " +
+            "where invoiceType = 2 and cast(date as date) between ? and ?;";
     private static final String FIND_ALL_INVOICE_CODE = "SELECT invoiceCode FROM invoice;";
+
+
+    public  double[] getRevenueAndProfit(String dateStart,String dateEnd){
+        try (Connection connection = DatabaseConnection.getConnect()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_BY_DATE);
+            preparedStatement.setString(1, dateStart);
+            preparedStatement.setString(2, dateEnd);
+            ResultSet resultSet= preparedStatement.executeQuery();
+            double revenue=0;
+            double profit=0;
+
+            while (resultSet.next()){
+                revenue+=resultSet.getDouble("totalSalePrice");
+                profit+=resultSet.getDouble("totalProfit");
+            }
+            double[] res= new double[2];
+            res[0]=revenue;
+            res[1]=profit;
+            return res;
+
+        }catch (SQLException e) {
+            return null;
+        }
+
+    }
 
     public static boolean isExistedInvoiceCode(String invoiceCode){
         List<String> invoiceCodes=new ArrayList<>();
@@ -46,9 +71,10 @@ public class InvoiceDAO implements IDAO<Invoice> {
         try (Connection connection = DatabaseConnection.getConnect()) {
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL);
             preparedStatement.setString(1, invoice.getInvoiceCode());
-//            preparedStatement.setString(2, invoice.getDate().toString());
-            preparedStatement.setDouble(2, invoice.getTotal());
-            preparedStatement.setInt(3, invoice.getType());
+            preparedStatement.setDouble(2, invoice.getTotalSalePrice());
+            preparedStatement.setDouble(3, invoice.getTotalImportPrice());
+            preparedStatement.setDouble(4, invoice.getTotalProfit());
+            preparedStatement.setInt(5, invoice.getInvoiceType());
             preparedStatement.execute();
             if (!InvoiceDetailDAO.save(invoice.getItems(),invoice.getInvoiceCode())){
                 return false;
