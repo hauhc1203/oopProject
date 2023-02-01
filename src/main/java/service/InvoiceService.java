@@ -11,10 +11,23 @@ import java.sql.Date;
 import java.util.*;
 
 public class InvoiceService {
-    private InvoiceDAO invoiceDAO = new InvoiceDAO();
-    private Scanner scanner = new Scanner(System.in);
+    private InvoiceDAO invoiceDAO ;
+    private Scanner scanner ;
 
-    ProductService productService = new ProductService();
+    private ProductDAO productDAO;
+
+    ProductService productService ;
+
+
+    public InvoiceService(InvoiceDAO invoiceDAO, Scanner scanner, ProductDAO productDAO, ProductService productService) {
+        this.invoiceDAO = invoiceDAO;
+        this.scanner = scanner;
+        this.productDAO = productDAO;
+        this.productService = productService;
+    }
+
+    public InvoiceService() {
+    }
 
     public int chooseInvoiceType() {
         System.out.println("1. Import");
@@ -26,7 +39,8 @@ public class InvoiceService {
         choices.add(3);
         while (true) {
             int choie = ProjectUtils.getInputInteger("choice", choices);
-
+            if (choie==Constant.ERROR_3_TIMES)
+                return choie;
             if (choie == Constant.IMPORT_INVOICE || choie == Constant.EXPORT_INVOICE || choie == Constant.GO_BACK) {
                 return choie;
             }
@@ -37,19 +51,28 @@ public class InvoiceService {
 
     public Invoice create() {
         int choice = chooseInvoiceType();
-        if (choice == Constant.GO_BACK) return null;
+        if (choice == Constant.GO_BACK||choice==Constant.ERROR_3_TIMES) return null;
         productService.showAllProduct(Constant.ALL);
         System.out.println("Enter product code and quantity to continue");
         System.out.println("If the product does not exist yet. Press 'b' to go back");
+        System.out.println("Enter any character except 'b' to continue");
         String s = scanner.nextLine();
         if (s.equalsIgnoreCase("b"))
             return null;
         boolean isDone = false;
         Map<ElectricDevice, Integer> items = new HashMap<>();
         while (!isDone) {
-            ElectricDevice electricDevice = getProduct();
-            int quantity = getQuantity(electricDevice.getQuantity() - ProjectUtils.getValueByProductCode(electricDevice.getProductCode(), items), choice);
-//            double importPrice=ProjectUtils.getInputDouble("import price");
+            ElectricDevice electricDevice =ProjectUtils.getProduct();
+            if (electricDevice==null)
+                return null;
+            int qtyExported=ProjectUtils.getValueByProductCode(electricDevice.getProductCode(), items);
+            if (choice==Constant.EXPORT_INVOICE&&electricDevice.getQuantity()==qtyExported){
+                System.out.println("The maximum amount has been reached");
+                continue;
+            }
+            int quantity = getQuantity(electricDevice.getQuantity() - qtyExported, choice);
+            if (quantity==Constant.ERROR_3_TIMES)
+                return null;
             ProjectUtils.addProductToItems(electricDevice, quantity, items);
             System.out.println("Add product success!!!");
             System.out.println("1. Add new");
@@ -88,35 +111,25 @@ public class InvoiceService {
         while (true) {
 
             if (invoiceType == Constant.IMPORT_INVOICE) {
-                int quantity = ProjectUtils.getInputInteger("quantity ", null);
+                int quantity = ProjectUtils.getInputInteger("quantity",null);
                 if (quantity > 0)
                     return quantity;
+
             }
             if (invoiceType == Constant.EXPORT_INVOICE) {
-                int quantity = ProjectUtils.getInputInteger("quantity, max " + max, null);
+                int quantity = ProjectUtils.getQuantityExport( max);
                 if (quantity > 0 && quantity <= max)
+                    return quantity;
+                if (quantity==Constant.ERROR_3_TIMES)
                     return quantity;
             }
 
-            System.out.println("Invalid quantity, please try again!");
+
 
         }
     }
 
-    public ElectricDevice getProduct() {
-        while (true) {
-            System.out.println("Enter product code");
-            String productCode = scanner.nextLine();
-            if (ProjectUtils.validate(Constant.PRODUCT_CODE_REGEX, productCode, 8, 8)) {
-                ElectricDevice electricDevice = ProductDAO.findByProductCode(productCode);
-                if (electricDevice != null)
-                    return electricDevice;
-                System.out.println("Product code not existed, please try again!");
-            } else {
-                System.out.println("Product code invalid, please try again!");
-            }
-        }
-    }
+
 
 
 
@@ -144,7 +157,11 @@ public class InvoiceService {
                     break;
                 case 2:
                     String dateStart=ProjectUtils.getInputDateString("date start");
+                    if (dateStart==null)
+                        break;
                     String dateEnd=ProjectUtils.getInputDateString("date end");
+                    if (dateEnd==null)
+                        break;
                     double[] data=invoiceDAO.getRevenueAndProfit(dateStart,dateEnd);
                     System.out.println(String.format(Constant.PARTTEN_OVERVIEW,"Revenue: ",data[0]));
                     System.out.println(String.format(Constant.PARTTEN_OVERVIEW,"Profit: ",data[1]));
@@ -152,7 +169,7 @@ public class InvoiceService {
                 case 3:
                     return;
                 default:
-                    break;
+                    System.out.println("No choice!!!");;
             }
 
         }

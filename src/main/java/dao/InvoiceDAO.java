@@ -87,12 +87,12 @@ public class InvoiceDAO implements IDAO<Invoice> {
     }
 
     @Override
-    public boolean deleteByID(int id) {
+    public boolean deleteByID(String id) {
         return false;
     }
 
     @Override
-    public Invoice findById(int id) {
+    public Invoice findById(String id) {
         return null;
     }
 

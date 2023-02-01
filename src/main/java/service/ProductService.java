@@ -14,8 +14,14 @@ import java.util.Scanner;
 
 
 public class ProductService {
-    private ProductDAO productDAO = new ProductDAO();
-    private Scanner scanner = new Scanner(System.in);
+    private ProductDAO productDAO;
+    private Scanner scanner;
+
+    public ProductService(ProductDAO productDAO, Scanner scanner) {
+        this.productDAO = productDAO;
+        this.scanner = scanner;
+    }
+
 
     public void showProductDetail(List<ElectricDevice> electricDeviceList) {
         System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -52,7 +58,6 @@ public class ProductService {
         title += StringUtils.center("Hard Disk", 10);
 
 
-
         System.out.println(title);
         System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         electricDeviceList.forEach(electricDevice -> {
@@ -69,22 +74,22 @@ public class ProductService {
             value += StringUtils.center(electricDevice.getProductTypeName(), 15);
             value += "|";
             value += StringUtils.center(electricDevice.getQuantity() + "", 10);
-            if (electricDevice instanceof SmartPhone){
+            if (electricDevice instanceof SmartPhone) {
                 value += "|";
-                value += StringUtils.center(((SmartPhone) electricDevice).getWidth()+"", 10);
+                value += StringUtils.center(((SmartPhone) electricDevice).getWidth() + "", 10);
                 value += "|";
-                value += StringUtils.center(((SmartPhone) electricDevice).getHeight()+"", 10);
+                value += StringUtils.center(((SmartPhone) electricDevice).getHeight() + "", 10);
                 value += "|";
-                value += StringUtils.center(((SmartPhone) electricDevice).getResolution()+"", 10);
+                value += StringUtils.center(((SmartPhone) electricDevice).getResolution() + "", 10);
                 value += "|";
-                value += StringUtils.center(((SmartPhone) electricDevice).getBatteryLife()+"", 15);
+                value += StringUtils.center(((SmartPhone) electricDevice).getBatteryLife() + "", 15);
                 value += "|";
                 value += StringUtils.center("-", 8);
                 value += "|";
                 value += StringUtils.center("-", 8);
                 value += "|";
                 value += StringUtils.center("-", 10);
-            }else if (electricDevice instanceof Laptop){
+            } else if (electricDevice instanceof Laptop) {
                 value += "|";
                 value += StringUtils.center("-", 10);
                 value += "|";
@@ -96,9 +101,9 @@ public class ProductService {
                 value += "|";
                 value += StringUtils.center(((Laptop) electricDevice).getCpu(), 8);
                 value += "|";
-                value += StringUtils.center(((Laptop) electricDevice).getRam()+"", 8);
+                value += StringUtils.center(((Laptop) electricDevice).getRam() + "", 8);
                 value += "|";
-                value += StringUtils.center(((Laptop) electricDevice).getHardDiskCapacity()+"", 10);
+                value += StringUtils.center(((Laptop) electricDevice).getHardDiskCapacity() + "", 10);
             }
             System.out.println(value);
 
@@ -210,7 +215,7 @@ public class ProductService {
         switch (choice) {
             case 1:
                 ElectricDevice electricDevice = createProduct();
-                if (electricDevice == null){
+                if (electricDevice == null) {
                     System.out.println("Create new product failed!!!");
                     break;
                 }
@@ -219,12 +224,24 @@ public class ProductService {
                 System.out.println("Create new product success!!!");
                 break;
             case 2:
+                electricDevice = editProduct();
+                if (electricDevice != null) {
+                    boolean rs = productDAO.edit(electricDevice);
+                    if (rs) {
+                        System.out.println("Update success!!!");
+                    } else {
+                        System.out.println("Update failed!!!");
+                    }
 
+                } else {
+                    System.out.println("Update failed!!!");
+                }
                 break;
             case 3:
                 search();
                 break;
             case 4:
+                delete();
                 break;
             case 5:
                 int pT = selectProductTypeToShow();
@@ -237,12 +254,115 @@ public class ProductService {
         return productType;
     }
 
+    public void delete() {
+        ElectricDevice electricDevice = getProduct();
+        if (electricDevice == null)
+            return;
+        if (productDAO.deleteByID(electricDevice.getProductCode())) {
+            System.out.println("delete success!!!");
+        } else {
+            System.out.println("delete failed!!!");
+        }
+    }
+
+    public ElectricDevice getProduct() {
+        int c = 0;
+        while (c < 3) {
+            System.out.println("Enter product code");
+            String productCode = scanner.nextLine();
+            if (ProjectUtils.validate(Constant.PRODUCT_CODE_REGEX, productCode, 8, 8)) {
+                ElectricDevice electricDevice = productDAO.findById(productCode);
+                if (electricDevice != null)
+                    return electricDevice;
+                c++;
+                if (c == 3)
+                    break;
+                System.out.println("Product code not existed, you have " + (3 - c) + " chances left");
+            } else {
+                c++;
+                if (c == 3)
+                    break;
+                System.out.println("Product code invalid, you have " + (3 - c) + " chances left");
+            }
+        }
+        return null;
+    }
+
+    public ElectricDevice editProduct() {
+        System.out.println("Edit product: ");
+        ElectricDevice electricDevice = getProduct();
+        if (electricDevice == null)
+            return null;
+        System.out.println(electricDevice.getInfo());
+        String name = ProjectUtils.getInputString("Product name", 8, 20);
+        if (name == null)
+            return null;
+        electricDevice.setName(name);
+        String brand = ProjectUtils.getInputString("Brand", 4, 20);
+        if (brand == null)
+            return null;
+        electricDevice.setBrand(brand);
+        String model = ProjectUtils.getInputString("Model", 4, 20);
+        if (model == null)
+            return null;
+        electricDevice.setModel(model);
+        double salePrice = ProjectUtils.getInputDouble("Sale price");
+        if (salePrice < 0)
+            return null;
+        electricDevice.setSalePrice(salePrice);
+
+        double importPrice = ProjectUtils.getInputDouble("Import price");
+        if (importPrice < 0)
+            return null;
+        electricDevice.setImportPrice(importPrice);
+
+        int quantity = ProjectUtils.getInputInteger("Quantity", null);
+        if (quantity == Constant.ERROR_3_TIMES)
+            return null;
+        electricDevice.setQuantity(quantity);
+        if (electricDevice instanceof SmartPhone) {
+            double width = ProjectUtils.getInputDouble("Width");
+            if (width < 0)
+                return null;
+            ((SmartPhone) electricDevice).setWidth(width);
+            double height = ProjectUtils.getInputDouble("Height");
+            if (height < 0)
+                return null;
+            ((SmartPhone) electricDevice).setHeight(height);
+            int batteryLife = ProjectUtils.getInputInteger("Battery life", null);
+            if (batteryLife == Constant.ERROR_3_TIMES)
+                return null;
+            ((SmartPhone) electricDevice).setBatteryLife(batteryLife);
+            double resolution = ProjectUtils.getInputInteger("Resolution", null);
+            if (resolution < 0)
+                return null;
+            ((SmartPhone) electricDevice).setResolution(resolution);
+        } else if (electricDevice instanceof Laptop) {
+            String cpu = ProjectUtils.getInputString("Cpu info", 8, 20);
+            if (cpu == null)
+                return null;
+            ((Laptop) electricDevice).setCpu(cpu);
+            int ram = ProjectUtils.getInputInteger("RAM info", null);
+            if (ram == Constant.ERROR_3_TIMES)
+                return null;
+            ((Laptop) electricDevice).setRam(ram);
+            int hardDiskCapacity = ProjectUtils.getInputInteger("hard disk capacity", null);
+            if (hardDiskCapacity == Constant.ERROR_3_TIMES)
+                return null;
+            ((Laptop) electricDevice).setHardDiskCapacity(hardDiskCapacity);
+        }
+
+        return electricDevice;
+    }
+
 
     public ElectricDevice createProduct() {
         System.out.println("Create product: ");
         int productType = chooseProductType();
         if (productType == Constant.GO_BACK) return null;
         String productCode = getInputProductCode();
+        if (productCode == null)
+            return null;
         String name = ProjectUtils.getInputString("Product name", 8, 20);
         if (name == null)
             return null;
@@ -291,7 +411,6 @@ public class ProductService {
                     return null;
                 return new Laptop(productCode, name, brand, model, salePrice, importPrice, quantity, productType, cpu, ram, hardDiskCapacity);
         }
-
         return null;
     }
 
@@ -337,16 +456,24 @@ public class ProductService {
     }
 
     public String getInputProductCode() {
-        while (true) {
+        int c = 0;
+        while (c < 3) {
             System.out.println("Enter product code(8 characters, letters or numbers)");
             String productCode = scanner.nextLine();
             if (ProjectUtils.validate(Constant.PRODUCT_CODE_REGEX, productCode, 8, 8)) {
                 if (!ProjectUtils.isExistedProductCode(productCode))
                     return productCode;
-                System.out.println("Product code existed, please try again!");
+                c++;
+                if (c == 3)
+                    break;
+                System.out.println("Product code existed , you have " + (3 - c) + " chances left");
             } else {
-                System.out.println("Product code invalid, please try again!");
+                c++;
+                if (c == 3)
+                    break;
+                System.out.println("Product code invalid, you have " + (3 - c) + " chances left");
             }
         }
+        return null;
     }
 }

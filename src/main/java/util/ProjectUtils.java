@@ -13,6 +13,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//hau
 public class ProjectUtils {
     private static Scanner scanner = new Scanner(System.in);
     static String[] upper = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
@@ -43,6 +44,29 @@ public class ProjectUtils {
         }
 
         return newCode;
+    }
+
+    public static ElectricDevice getProduct() {
+        int c=0;
+        while (c<3) {
+            System.out.println("Enter product code");
+            String productCode = scanner.nextLine();
+            if (ProjectUtils.validate(Constant.PRODUCT_CODE_REGEX, productCode, 8, 8)) {
+                ElectricDevice electricDevice = ProductDAO.findByProductCode(productCode);
+                if (electricDevice != null)
+                    return electricDevice;
+                c++;
+                if (c==3)
+                    break;
+                System.out.println("Product code not existed, you have " + (3 - c) + " chances left");
+            } else {
+                c++;
+                if (c==3)
+                    break;
+                System.out.println("Product code invalid, you have " + (3 - c) + " chances left");
+            }
+        }
+        return null;
     }
 
     public static String generateInvoiceCode() {
@@ -127,7 +151,24 @@ public class ProjectUtils {
         return data;
 
     }
+    public static int getQuantityExport(int max) {
+        int c = 0;
+        while (c < 3) {
+            System.out.println("Enter quantity , max "+max+":");
+            try {
+                int value = Integer.parseInt(scanner.nextLine());
+                if (value>0  && value<=max)
+                    return value;
+                c++;
+                System.out.println("Invalid quantity, you have " + (3 - c) + " chances left");
+            } catch (Exception e) {
+                c++;
+                System.out.println("Invalid quantity, you have " + (3 - c) + " chances left");
+            }
 
+        }
+        return Constant.ERROR_3_TIMES;
+    }
 
     public static int getInputInteger(String property, List<Integer> choices) {
         int c = 0;
@@ -138,9 +179,13 @@ public class ProjectUtils {
                 if (choices != null && choices.contains(value) || value >= 0)
                     return value;
                 c++;
+                if (c==3)
+                    break;
                 System.out.println("Invalid " + property + ", you have " + (3 - c) + " chances left");
             } catch (Exception e) {
                 c++;
+                if (c==3)
+                    break;
                 System.out.println("Invalid " + property + ", you have " + (3 - c) + " chances left");
             }
 
@@ -151,12 +196,14 @@ public class ProjectUtils {
     public static String getInputDateString(String property) {
         int c = 0;
         while (c < 3) {
-            System.out.println("Enter " + property + " :");
+            System.out.println("Enter " + property + "(yyyy-MM-dd) :");
             String value = scanner.nextLine();
             if (ProjectUtils.validate(Constant.DATE_REGEX, value, 10, 10)) {
                 return value;
             } else {
                 c++;
+                if (c==3)
+                    break;
                 System.out.println("Invalid " + property + ", you have " + (3 - c) + " chances left");
             }
         }
@@ -172,6 +219,8 @@ public class ProjectUtils {
                 return value;
             } else {
                 c++;
+                if (c==3)
+                    break;
                 System.out.println("Invalid " + property + ", you have " + (3 - c) + " chances left");
             }
         }

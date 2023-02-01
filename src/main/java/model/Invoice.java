@@ -82,4 +82,6 @@ public class Invoice {
     public void setInvoiceType(int invoiceType) {
         this.invoiceType = invoiceType;
     }
+
+
 }

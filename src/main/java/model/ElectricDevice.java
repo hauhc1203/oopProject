@@ -101,6 +101,16 @@ public class ElectricDevice {
     }
 
 
-
-
+    public String getInfo() {
+        return
+                "productCode='" + productCode + '\'' +
+                ", name='" + name + '\'' +
+                ", brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", salePrice=" + salePrice +
+                ", importPrice=" + importPrice +
+                ", quantity=" + quantity +
+                ", productType=" + productType
+                ;
+    }
 }

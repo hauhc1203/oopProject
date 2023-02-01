@@ -1,6 +1,6 @@
 package model;
 
-public class SmartPhone extends ElectricDevice{
+public class SmartPhone extends ElectricDevice {
     private double width;
     private double height;
     // don vi milisecond
@@ -51,4 +51,17 @@ public class SmartPhone extends ElectricDevice{
     public void setResolution(double resolution) {
         this.resolution = resolution;
     }
+
+    @Override
+    public String getInfo() {
+        return "SmartPhone{" +
+                super.getInfo() +
+                "width=" + width +
+                ", height=" + height +
+                ", batteryLife=" + batteryLife +
+                ", resolution=" + resolution +
+                '}';
+
+    }
 }
+

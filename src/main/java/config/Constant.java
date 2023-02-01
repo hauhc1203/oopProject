@@ -1,5 +1,6 @@
 package config;
 
+//hau
 public class Constant {
     public static final int ALL=0;
     public static final int SMARTPHONE=1;

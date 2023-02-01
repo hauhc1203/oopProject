@@ -40,7 +40,14 @@ public class Laptop extends ElectricDevice {
     }
 
 
-
-
+    @Override
+    public String getInfo() {
+        return "Laptop{" +
+                super.getInfo()+
+                "cpu='" + cpu + '\'' +
+                ", ram=" + ram +
+                ", hardDiskCapacity=" + hardDiskCapacity +
+                '}';
+    }
 
 }

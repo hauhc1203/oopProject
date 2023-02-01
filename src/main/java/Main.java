@@ -1,4 +1,6 @@
 import config.Constant;
+import dao.InvoiceDAO;
+import dao.ProductDAO;
 import model.Invoice;
 import service.InvoiceService;
 import service.ProductService;
@@ -9,9 +11,13 @@ public class Main {
 
 
     public static void main(String[] args) {
-        ProductService productService = new ProductService();
-        InvoiceService invoiceService =new InvoiceService();
-        Scanner scanner = new Scanner(System.in);
+        ProductDAO productDAO=new ProductDAO();
+        Scanner scanner=new Scanner(System.in);
+        InvoiceDAO invoiceDAO=new InvoiceDAO();
+
+        ProductService productService = new ProductService(productDAO,scanner);
+        InvoiceService invoiceService =new InvoiceService(invoiceDAO,scanner,productDAO,productService);
+
         int productType = Constant.ALL;
         while (true) {
             System.out.println("WELLCOME");
