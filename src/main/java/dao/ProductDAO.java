@@ -61,6 +61,9 @@ public class ProductDAO implements IDAO<ElectricDevice> {
         return electricDevices;
     }
 
+    /**
+     * @author hauhc1203
+     */
     public List<ElectricDevice> findByNameOrBrand(String pname, String pbrand) {
         String query;
 
@@ -87,7 +90,9 @@ public class ProductDAO implements IDAO<ElectricDevice> {
         return electricDevices;
     }
 
-
+    /**
+     * @author hauhc1203
+     */
     public static void updateQuantityByProductCode(String productCode, int quantity) {
         try (Connection connection = DatabaseConnection.getConnect()) {
             PreparedStatement preparedStatement = connection.prepareStatement(updateQuantity);
@@ -99,6 +104,9 @@ public class ProductDAO implements IDAO<ElectricDevice> {
         }
     }
 
+    /**
+     * @author hauhc1203
+     */
     public static   ElectricDevice findByProductCode(String productCode) {
         try (Connection connection = DatabaseConnection.getConnect()) {
             PreparedStatement preparedStatement = connection.prepareStatement(findByProductCode);

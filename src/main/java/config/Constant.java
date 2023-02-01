@@ -1,6 +1,8 @@
 package config;
 
-//hau
+/**
+ * @author hauhc1203
+ */
 public class Constant {
     public static final int ALL=0;
     public static final int SMARTPHONE=1;

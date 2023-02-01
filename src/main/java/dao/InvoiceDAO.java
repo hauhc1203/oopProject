@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author hauhc1203
+ */
 public class InvoiceDAO implements IDAO<Invoice> {
     private static final String INSERT_SQL = "INSERT INTO invoice " +
             "( invoiceCode  ,totalSalePrice,totalImportPrice,totalProfit, invoiceType ) VALUES (?,?,?,?,?);";
@@ -19,7 +22,13 @@ public class InvoiceDAO implements IDAO<Invoice> {
             "where invoiceType = 2 and cast(date as date) between ? and ?;";
     private static final String FIND_ALL_INVOICE_CODE = "SELECT invoiceCode FROM invoice;";
 
-
+    /**
+     * get revenue and profit
+     * @author hauhc1203
+     * @param dateStart
+     * @param dateEnd
+     * @return revenue and profit
+     */
     public  double[] getRevenueAndProfit(String dateStart,String dateEnd){
         try (Connection connection = DatabaseConnection.getConnect()) {
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_BY_DATE);
@@ -43,7 +52,12 @@ public class InvoiceDAO implements IDAO<Invoice> {
         }
 
     }
-
+    /**
+     * check invoice code
+     * @author hauhc1203
+     * @param invoiceCode
+     * @return boolean
+     */
     public static boolean isExistedInvoiceCode(String invoiceCode){
         List<String> invoiceCodes=new ArrayList<>();
         try (Connection connection= DatabaseConnection.getConnect(); PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_INVOICE_CODE)){

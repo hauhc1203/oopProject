@@ -3,6 +3,9 @@ package model;
 import java.sql.Date;
 import java.util.Map;
 
+/**
+ * @author hauhc1203
+ */
 public class Invoice {
     private String invoiceCode;
     private Date date;

@@ -1,5 +1,8 @@
 package util;
 
+/**
+ * @author hauhc1203
+ */
 public class StringUtils {
 
     public static String center(String s, int size) {

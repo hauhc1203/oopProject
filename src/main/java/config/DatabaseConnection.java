@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-//hau
+/**
+ * @author hauhc1203
+ */
 public class DatabaseConnection {
     public static Connection getConnect(){
         String jdbcURL = "jdbc:mysql://localhost:3306/oopBigProject?useSSL=false";

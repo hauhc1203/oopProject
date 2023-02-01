@@ -177,6 +177,9 @@ public class ProductService {
         }
     }
 
+    /**
+     * @author hauhc1203
+     */
     public void search() {
         List<ElectricDevice> electricDevices;
         List<Integer> choices = new ArrayList<>();
@@ -208,7 +211,9 @@ public class ProductService {
 
     }
 
-
+    /**
+     * @author hauhc1203
+     */
     public int productMenu(int productType) {
         showAllProduct(productType);
         int choice = manageProduct();
@@ -261,7 +266,7 @@ public class ProductService {
         if (productDAO.deleteByID(electricDevice.getProductCode())) {
             System.out.println("delete success!!!");
         } else {
-            System.out.println("delete failed!!!");
+            System.out.println("delete failed !!!");
         }
     }
 
@@ -288,6 +293,9 @@ public class ProductService {
         return null;
     }
 
+    /**
+     * @author hauhc1203
+     */
     public ElectricDevice editProduct() {
         System.out.println("Edit product: ");
         ElectricDevice electricDevice = getProduct();

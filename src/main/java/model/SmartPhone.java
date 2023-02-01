@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * @author hauhc1203
+ */
 public class SmartPhone extends ElectricDevice {
     private double width;
     private double height;

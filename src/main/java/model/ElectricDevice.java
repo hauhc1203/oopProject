@@ -2,7 +2,9 @@ package model;
 
 
 import config.Constant;
-
+/**
+ * @author hauhc1203
+ */
 public class ElectricDevice {
     private String productCode;
     private String name;

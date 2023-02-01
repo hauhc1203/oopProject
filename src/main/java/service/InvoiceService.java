@@ -6,10 +6,11 @@ import dao.ProductDAO;
 import model.ElectricDevice;
 import model.Invoice;
 import util.ProjectUtils;
-
-import java.sql.Date;
 import java.util.*;
 
+/**
+ * @author hauhc1203
+ */
 public class InvoiceService {
     private InvoiceDAO invoiceDAO ;
     private Scanner scanner ;
@@ -117,7 +118,7 @@ public class InvoiceService {
 
             }
             if (invoiceType == Constant.EXPORT_INVOICE) {
-                int quantity = ProjectUtils.getQuantityExport( max);
+                int quantity = ProjectUtils.getInputInteger( max);
                 if (quantity > 0 && quantity <= max)
                     return quantity;
                 if (quantity==Constant.ERROR_3_TIMES)

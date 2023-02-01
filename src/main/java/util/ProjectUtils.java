@@ -4,8 +4,6 @@ import config.Constant;
 import dao.InvoiceDAO;
 import dao.ProductDAO;
 import model.ElectricDevice;
-import model.Invoice;
-import org.w3c.dom.CDATASection;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +11,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//hau
+/**
+ * @author hauhc1203
+ */
 public class ProjectUtils {
     private static Scanner scanner = new Scanner(System.in);
     static String[] upper = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
@@ -151,7 +151,7 @@ public class ProjectUtils {
         return data;
 
     }
-    public static int getQuantityExport(int max) {
+    public static int getInputInteger(int max) {
         int c = 0;
         while (c < 3) {
             System.out.println("Enter quantity , max "+max+":");

@@ -32,9 +32,10 @@ CREATE TABLE invoice (
 	quantity int not null,
 	salePrice double,
     importPrice double,
-    CONSTRAINT fk_1 FOREIGN KEY(productCode) REFERENCES product(productCode),
+#     CONSTRAINT fk_1 FOREIGN KEY(productCode) REFERENCES product(productCode),
     CONSTRAINT fk_2 FOREIGN KEY(invoiceCode) REFERENCES invoice(invoiceCode),
      CONSTRAINT pk PRIMARY KEY(productCode,invoiceCode)
  );
- 
+# ALTER TABLE invoiceDetail
+#     DROP CONSTRAINT fk_1;
  

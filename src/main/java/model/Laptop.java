@@ -1,5 +1,9 @@
 package model;
 
+
+/**
+ * @author hauhc1203
+ */
 public class Laptop extends ElectricDevice {
     private String cpu;
     private int ram;
